@@ -23,7 +23,7 @@ alexaApp.express({
 // now POST calls to /test in express will be handled by the app.request() function
 
 // from here on you can setup any other express routes or middlewares as normal
-// app.set("view engine", "ejs");
+app.set("view engine", "ejs");
 
 alexaApp.launch(function(request, response) {
   response.say("You launched the app!");
