@@ -50,5 +50,5 @@ alexaApp.intent("nameIntent", {
   }
 );
 
-app.listen(PORT);
+app.listen(PORT, '0.0.0.0');
 console.log("Listening on port " + PORT + ", try http://localhost:" + PORT + "/test");
