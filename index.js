@@ -1,8 +1,33 @@
 var express = require("express");
 var alexa = require("alexa-app");
-var express_app = express();
 
-var app = new alexa.app("sample");
+var PORT = process.env.port || 80;
+var app = express();
+
+// ALWAYS setup the alexa app and attach it to express before anything else.
+var alexaApp = new alexa.app("test");
+
+alexaApp.express({
+  expressApp: app,
+
+  // verifies requests come from amazon alexa. Must be enabled for production.
+  // You can disable this if you're running a dev environment and want to POST
+  // things to test behavior. enabled by default.
+  checkCert: false,
+
+  // sets up a GET route when set to true. This is handy for testing in
+  // development, but not recommended for production. disabled by default
+  debug: true
+});
+
+// now POST calls to /test in express will be handled by the app.request() function
+
+// from here on you can setup any other express routes or middlewares as normal
+// app.set("view engine", "ejs");
+
+alexaApp.launch(function(request, response) {
+  response.say("You launched the app!");
+});
 
 app.intent("hi", {}, function (request, response) {
     response.say("hi, how are you ");
@@ -12,15 +37,18 @@ app.intent("hello", {}, function (request, response) {
     response.say("hello, how do you do");
 });
 
-app.intent("number", {
-    "slots": { "number": "AMAZON.NUMBER" },
-    "utterances": ["say the number {-|number}"]
-},
-    function (request, response) {
-        var number = request.slot("number");
-        response.say("You asked for the number " + number);
-    }
+alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
+
+alexaApp.intent("nameIntent", {
+    "slots": { "NAME": "LITERAL" },
+    "utterances": [
+      "my {name is|name's} {names|NAME}", "set my name to {names|NAME}"
+    ]
+  },
+  function(request, response) {
+    response.say("Success!");
+  }
 );
 
-// setup the alexa app and attach it to express before anything else
-app.express({ expressApp: express_app });
+app.listen(PORT);
+console.log("Listening on port " + PORT + ", try http://localhost:" + PORT + "/test");
