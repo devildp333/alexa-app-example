@@ -29,11 +29,11 @@ alexaApp.launch(function(request, response) {
   response.say("You launched the app!");
 });
 
-app.intent("hi", {}, function (request, response) {
+alexaApp.intent("hi", {}, function (request, response) {
     response.say("hi, how are you ");
 });
 
-app.intent("hello", {}, function (request, response) {
+alexaApp.intent("hello", {}, function (request, response) {
     response.say("hello, how do you do");
 });
 
