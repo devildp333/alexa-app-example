@@ -4,6 +4,9 @@ var alexa = require("alexa-app");
 var PORT = process.env.PORT || 80;
 var app = express();
 
+// Configrate the intents and utterances of the Alexa skill
+var config = require("./config");
+
 // ALWAYS setup the alexa app and attach it to express before anything else.
 var alexaApp = new alexa.app("test");
 
@@ -25,40 +28,25 @@ alexaApp.express({
 // from here on you can setup any other express routes or middlewares as normal
 app.set("view engine", "ejs");
 
-alexaApp.launch(function(request, response) {
+alexaApp.launch(function (request, response) {
   response.say("You launched the app!");
 });
 
-alexaApp.intent("hi", {
-    "slots": {},
-    "utterances": [
-      "say hi"
-    ]
-}, function (request, response) {
-    response.say("Hi. How are you.");
-});
+// add dictionary to alexa app
+alexaApp.dictionary = config.dictionary;
 
-alexaApp.intent("hello", {
-    "slots": {},
-    "utterances": [
-      "say hello"
-    ]
-}, function (request, response) {
-    response.say("Hello. How do you do.");
-});
 
-alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
-
-alexaApp.intent("nameIntent", {
-    "slots": { "NAME": "LITERAL" },
-    "utterances": [
-      "my {name is|name's} {names|NAME}", "set my name to {names|NAME}"
-    ]
-  },
-  function(request, response) {
-    response.say("Success!");
-  }
-);
+// add interaction model to alexa app
+for (var ele of config.interaction_model) {
+  alexaApp.intent(
+    ele.intent_name, {
+      slots: ele.slots,
+      utterances: ele.utterances
+    }, function (request, response) {
+      response.say(ele.response);
+    }
+  );
+}
 
 app.listen(PORT);
 console.log("Listening on port " + PORT + ", try http://localhost:" + PORT + "/test");
