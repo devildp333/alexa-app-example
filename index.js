@@ -35,7 +35,7 @@ alexaApp.intent("hi", {
       "say hi"
     ]
 }, function (request, response) {
-    response.say("hi, how are you ");
+    response.say("Hi. How are you.");
 });
 
 alexaApp.intent("hello", {
@@ -44,7 +44,7 @@ alexaApp.intent("hello", {
       "say hello"
     ]
 }, function (request, response) {
-    response.say("hello, how do you do");
+    response.say("Hello. How do you do.");
 });
 
 alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
