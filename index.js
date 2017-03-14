@@ -1,14 +1,15 @@
-var express = require("express");
-var alexa = require("alexa-app");
+'use strict';
+let express = require("express");
+let alexa = require("alexa-app");
 
-var PORT = process.env.PORT || 80;
-var app = express();
+let PORT = process.env.PORT || 80;
+let app = express();
 
 // Configrate the intents and utterances of the Alexa skill
-var config = require("./config");
+let config = require("./config");
 
 // ALWAYS setup the alexa app and attach it to express before anything else.
-var alexaApp = new alexa.app("test");
+let alexaApp = new alexa.app("test");
 
 alexaApp.express({
   expressApp: app,
@@ -37,16 +38,19 @@ alexaApp.dictionary = config.dictionary;
 
 
 // add interaction model to alexa app
-for (var ele of config.interaction_model) {
+config.interaction_model.map(ele => {
+  let callback = function (request, response) {
+    response.say(ele.response);
+  };
+
   alexaApp.intent(
     ele.intent_name, {
       slots: ele.slots,
       utterances: ele.utterances
-    }, function (request, response) {
-      response.say(ele.response);
-    }
+    }, callback
   );
-}
+});
+
 
 app.listen(PORT);
 console.log("Listening on port " + PORT + ", try http://localhost:" + PORT + "/test");
